@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)https://www.cnblogs.com/51python/p/10966757.html -->
+<html lang="zh-cn" xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="origin-when-crossorigin">
+    <meta name="description" content="Kafka参数详解 每个kafka broker中配置文件server.properties默认必须配置的属性如下： broker.id=0 num.network.threads=2 num.io.">
+    <meta property="og:description" content="Kafka参数详解 每个kafka broker中配置文件server.properties默认必须配置的属性如下： broker.id=0 num.network.threads=2 num.io.">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>kafka参数解析+启动参数解析 - -涂涂- - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="https://common.cnblogs.com/favicon.svg" type="image/svg+xml">
+    
+    <link rel="stylesheet" href="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/blog-common.min.css">
+    <link id="MainCss" rel="stylesheet" href="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/bundle-banlieue13.min.css">
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/bundle-banlieue13-mobile.min.css">
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/51python/rss">
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/51python/rsd.xml">
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/51python/wlwmanifest.xml">
+    <script src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/osd.js"></script><script async="" src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/analytics.js"></script><script type="text/javascript" src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/encoder.js"></script><script>
+        var currentBlogId = 481537;
+        var currentBlogApp = '51python';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'Banlieue13';
+        var visitorUserId = '';
+    </script>
+        <script>
+            var currentPostDateAdded = '2019-06-03 12:07';
+        </script>
+    <script src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/jquery-2.2.0.min.js"></script>
+    <script src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/blog-common.min.js"></script><style type="text/css">.medium-zoom-overlay{position:fixed;top:0;right:0;bottom:0;left:0;opacity:0;transition:opacity .3s;will-change:opacity}.medium-zoom--opened .medium-zoom-overlay{cursor:pointer;cursor:zoom-out;opacity:1}.medium-zoom-image{cursor:pointer;cursor:zoom-in;transition:transform .3s cubic-bezier(.2,0,.2,1)!important}.medium-zoom-image--hidden{visibility:hidden}.medium-zoom-image--opened{position:relative;cursor:pointer;cursor:zoom-out;will-change:transform}</style>
+    
+    
+    
+<meta http-equiv="origin-trial" content="A+b/H0b8RPXNaJgaNFpO0YOFuGK6myDQXlwnJB3SwzvNMfcndat4DZYMrP4ClJIzYWo3/yP2S+8FTZ/lpqbPAAEAAABueyJvcmlnaW4iOiJodHRwczovL2ltYXNkay5nb29nbGVhcGlzLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzVGhpcmRQYXJ0eSI6dHJ1ZX0="><meta http-equiv="origin-trial" content="A9ZgbRtm4pU3oZiuNzOsKcC8ppFSZdcjP2qYcdQrFKVzkmiWH1kdYY1Mi9x7G8+PS8HV9Ha9Cz0gaMdKsiVZIgMAAAB7eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="AxL6oBxcpn5rQDPKSAs+d0oxNyJYq2/4esBUh3Yx5z8QfcLu+AU8iFCXYRcr/CEEfDnkxxLTsvXPJFQBxHfvkgMAAACBeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A9KPtG5kl3oLTk21xqynDPGQ5t18bSOpwt0w6kGa6dEWbuwjpffmdUpR3W+faZDubGT+KIk2do0BX2ca16x8qAcAAACBeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A3HucHUo1oW9s+9kIKz8mLkbcmdaj5lxt3eiIMp1Nh49dkkBlg1Fhg4Fd/r0vL69mRRA36YutI9P/lJUfL8csQoAAACFeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjI2MjIwNzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="><meta http-equiv="origin-trial" content="A0OysezhLoCRYomumeYlubLurZTCmsjTb087OvtCy95jNM65cfEsbajrJnhaGwiTxhz38ZZbm+UhUwQuXfVPTg0AAACLeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjI2MjIwNzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="><meta http-equiv="origin-trial" content="AxoOxdZQmIoA1WeAPDixRAeWDdgs7ZtVFfH2y19ziTgD1iaHE5ZGz2UdSjubkWvob9C5PrjUfkWi4ZSLgWk3Xg8AAACLeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjI2MjIwNzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="><meta http-equiv="origin-trial" content="A7+rMYR5onPnACrz+niKSeFdH3xw1IyHo2AZSHmxrofRk9w4HcQPMYcpBUKu6OQ6zsdxf4m/vqa6tG6Na4OLpAQAAAB4eyJvcmlnaW4iOiJodHRwczovL2ltYXNkay5nb29nbGVhcGlzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjI2MjIwNzk5LCJpc1RoaXJkUGFydHkiOnRydWV9"><script src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/pubads_impl_2021041501.js" async=""></script><link rel="preload" href="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/f.txt" as="script"><script type="text/javascript" src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/f.txt"></script><link rel="prefetch" href="https://7c1049c4de10a9349fe7ded434ad0f6d.safeframe.googlesyndication.com/safeframe/1-0-38/html/container.html"><link rel="prefetch" href="https://tpc.googlesyndication.com/safeframe/1-0-38/html/container.html"></head>
+<body class="no-navbar" style="">
+    <a name="top"></a>
+        <div id="bannerbar" class="bannerbar-mobile formobile">
+            <a href="https://developer.aliyun.com/topic/worldreadingday?utm_content=g_1000264433" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;aliyun-blog-bannerbar-mobile&#39;)">
+                <img src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/35695-20210420120421313-857081365.jpg" alt="">
+            </a>
+        </div>
+    <div id="top_nav" class="navbar forpc navbar-custom">
+        <nav id="nav_main" class="navbar-main">
+            <ul id="nav_left" class="navbar-list navbar-left">
+                <li class="navbar-branding"><a href="https://www.cnblogs.com/" title="开发者的网上家园"><img src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/logo.svg" alt="博客园Logo"></a></li>
+                <li><a href="https://www.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-sitehome&#39;)">首页</a></li>
+                <li><a href="https://news.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-news&#39;)">新闻</a></li>
+                <li><a href="https://q.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-q&#39;)">博问</a></li>
+                <li><a id="nav_brandzone" href="https://brands.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-brands&#39;)">专区</a></li>
+                <li><a href="https://ing.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-ing&#39;)">闪存</a></li>
+                <li><a href="https://edu.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-edu&#39;)">班级</a></li>
+            </ul>
+            <ul id="nav_right" class="navbar-list navbar-right">
+                <li>
+                    <form id="zzk_search" class="navbar-search" action="https://zzk.cnblogs.com/s" method="get">
+                        <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="text" tabindex="3">
+                        <button type="submit" id="zzk_search_button">
+                            <img src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/search.svg" alt="搜索">
+                        </button>
+                    </form>
+                </li>
+                <li id="navbar_login_status" class="navbar-list">
+                    <a class="navbar-user-info navbar-blog" href="https://i.cnblogs.com/EditPosts.aspx?opt=1" alt="写随笔" title="写随笔">
+                        <img id="new_post_icon" class="navbar-icon" src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/newpost.svg" alt="写随笔">
+                    </a>
+                    <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客">
+                        <img id="myblog_icon" class="navbar-icon" src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/myblog.svg" alt="我的博客">
+                    </a>
+                    <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息">
+                        <img id="msg_icon" class="navbar-icon" src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/message.svg" alt="短消息">
+                        <span id="msg_count" style="display: none"></span>
+                    </a>
+                    <div id="user_info" class="navbar-user-info dropdown">
+                        <a class="dropdown-button" href="https://home.cnblogs.com/">
+                            <img id="user_icon" class="navbar-avatar" src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/avatar-default.svg" alt="用户头像">
+                        </a>
+                        <div class="dropdown-menu">
+                            <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                            <a href="https://home.cnblogs.com/">我的园子</a>
+                            <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                            <a href="javascript:void(0)" id="navbar_lite_mode_toggle" title="简洁模式会使用简洁款皮肤显示所有博客">
+    简洁模式 <img id="navbar_lite_mode_on" src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/lite-mode-check.svg" class="hide"><span id="navbar_lite_mode_spinner" class="hide">...</span>
+</a>
+                            <a href="javascript:void(0)" onclick="account.logout();">退出登录</a>
+                        </div>
+                    </div>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signup/">注册</a>
+                    <a class="navbar-anonymous" href="javascript:void(0);" onclick="account.login()">登录</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div id="page_begin_html">
+        
+
+
+    
+    <title>Live2D</title>
+     
+    <link rel="stylesheet" type="text/css" href="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/waifu.css">
+    <script src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/jquery.min.js" defer=""></script>
+
+
+    <link rel="stylesheet" type="text/css" href="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/waifu.css">
+    <div class="waifu" id="waifu">
+        <div class="waifu-tips" style="opacity: 0;">这句一言出处是 <span style="color:#0099cc;">『推理之绊』</span>，是 <span style="color:#0099cc;">FGHRSH</span> 在 2015.09.23 23:12:32 收藏的！</div>
+        <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+        <div class="waifu-tool">
+            <span class="fui-home"></span>
+            <span class="fui-chat"></span>
+            <span class="fui-eye"></span>
+            <span class="fui-user"></span>
+            <span class="fui-photo"></span>
+            <span class="fui-info-circle"></span>
+            <span class="fui-cross"></span>
+        </div>
+    </div>
+    <script src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/live2d.js" defer=""></script>
+    <script src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/waifu-tips.js" defer=""></script>
+    <script type="text/javascript">initModel()</script>
+
+
+<link rel="stylesheet" type="text/css" href="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/flat-ui.min.css">
+
+    </div>
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a href="https://www.cnblogs.com/51python/"><img id="blogLogo" src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/logo.gif" alt="返回主页"></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/51python/">-涂涂-</a>
+</h1>
+<h2></h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="navigator">
+			
+<ul id="navList">
+	<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+	<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/51python/">
+首页</a>
+</li>
+	<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+	<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/-%E6%B6%82%E6%B6%82-">
+联系</a></li>
+	<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+	<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/51python/rss/">
+订阅</a>
+	
+<a id="blog_nav_rss_image" href="https://www.cnblogs.com/51python/rss/">
+    <img src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/xml.gif" alt="订阅">
+</a></li>
+</ul>
+
+
+
+			<div class="blogStats">
+				
+				<!--done-->
+随笔- 166&nbsp;
+文章- 2&nbsp;
+评论- 2&nbsp;
+阅读- 
+<span title="总阅读数: 203136">
+20万</span>&nbsp;
+
+
+
+				
+			</div><!--end: blogStats -->
+		</div><!--end: navigator 博客导航栏 -->
+		<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class="postTitle">
+			
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/51python/p/10966757.html">
+    <span>kafka参数解析+启动参数解析</span>
+    
+
+
+
+</a>
+
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<div>
+<h1>Kafka参数详解</h1>
+<p>每个kafka broker中配置文件server.properties默认必须配置的属性如下：</p>
+<pre class="hljs xml codeblock"><code class="xml hljs">broker.id=0  
+num.network.threads=2  
+num.io.threads=8  
+socket.send.buffer.bytes=1048576  
+socket.receive.buffer.bytes=1048576  
+socket.request.max.bytes=104857600  
+log.dirs=/tmp/kafka-logs  
+num.partitions=2  
+log.retention.hours=168  
+  
+log.segment.bytes=536870912  
+log.retention.check.interval.ms=60000  
+log.cleaner.enable=false  
+  
+zookeeper.connect=localhost:2181  
+
+</code></pre>
+<h2>系统参数</h2>
+<p>#唯一标识在集群中的ID，要求是正数。<br>
+broker.id=0<br>
+#服务端口，默认9092<br>
+port=9092<br>
+#监听地址<br>
+host.name=debugo01</p>
+<p># 处理网络请求的最大线程数<br>
+num.network.threads=2<br>
+# 处理磁盘I/O的线程数<br>
+num.io.threads=8<br>
+# 一些后台线程数<br>
+background.threads = 4<br>
+# 等待IO线程处理的请求队列最大数<br>
+queued.max.requests = 500</p>
+<p>#  socket的发送缓冲区（SO_SNDBUF）<br>
+socket.send.buffer.bytes=1048576<br>
+# socket的接收缓冲区 (SO_RCVBUF)<br>
+socket.receive.buffer.bytes=1048576<br>
+# socket请求的最大字节数。为了防止内存溢出，message.max.bytes必然要小于<br>
+socket.request.max.bytes = 104857600</p>
+<h2>Topic参数</h2>
+<p># 每个topic的分区个数，更多的partition会产生更多的segment file<br>
+num.partitions=2<br>
+# 是否允许自动创建topic ，若是false，就需要通过命令创建topic<br>
+auto.create.topics.enable =true<br>
+# 一个topic ，默认分区的replication个数 ，不能大于集群中broker的个数。<br>
+default.replication.factor =1<br>
+# 消息体的最大大小，单位是字节<br>
+message.max.bytes = 1000000</p>
+<h2>ZooKeeper参数</h2>
+<p># Zookeeper quorum设置。如果有多个使用逗号分割<br>
+zookeeper.connect=debugo01:2181,debugo02,debugo03<br>
+# 连接zk的超时时间<br>
+zookeeper.connection.timeout.ms=1000000<br>
+# ZooKeeper集群中leader和follower之间的同步实际<br>
+zookeeper.sync.time.ms = 2000</p>
+<h2>日志参数</h2>
+<p>#日志存放目录，多个目录使用逗号分割<br>
+log.dirs=/var/log/kafka</p>
+<p># 日志清理策略（delete|compact）<br>
+log.cleanup.policy = delete<br>
+# 日志保存时间 (hours|minutes)，默认为7天（168小时）。超过这个时间会根据policy处理数据。bytes和minutes无论哪个先达到都会触发。<br>
+log.retention.hours=168<br>
+# 日志数据存储的最大字节数。超过这个时间会根据policy处理数据。<br>
+#log.retention.bytes=1073741824</p>
+<p># 控制日志segment文件的大小，超出该大小则追加到一个新的日志segment文件中（-1表示没有限制）<br>
+log.segment.bytes=536870912<br>
+# 当达到下面时间，会强制新建一个segment<br>
+log.roll.hours = 24*7<br>
+# 日志片段文件的检查周期，查看它们是否达到了删除策略的设置（log.retention.hours或log.retention.bytes）<br>
+log.retention.check.interval.ms=60000</p>
+<p># 是否开启压缩<br>
+log.cleaner.enable=false<br>
+# 对于压缩的日志保留的最长时间<br>
+log.cleaner.delete.retention.ms = 1 day</p>
+<p># 对于segment日志的索引文件大小限制<br>
+log.index.size.max.bytes = 10 * 1024 * 1024<br>
+#y索引计算的一个缓冲区，一般不需要设置。<br>
+log.index.interval.bytes = 4096</p>
+<h2>副本参数</h2>
+<p># 是否自动平衡broker之间的分配策略<br>
+auto.leader.rebalance.enable = false<br>
+# leader的不平衡比例，若是超过这个数值，会对分区进行重新的平衡<br>
+leader.imbalance.per.broker.percentage = 10<br>
+# 检查leader是否不平衡的时间间隔<br>
+leader.imbalance.check.interval.seconds = 300<br>
+# 客户端保留offset信息的最大空间大小<br>
+offset.metadata.max.bytes = 1024</p>
+<h2>消费者参数</h2>
+<p># Consumer端核心的配置是group.id、zookeeper.connect<br>
+# 决定该Consumer归属的唯一组ID，By setting the same group id multiple processes indicate that they are all part of the same consumer group.<br>
+group.id<br>
+# 消费者的ID，若是没有设置的话，会自增<br>
+consumer.id<br>
+# 一个用于跟踪调查的ID ，最好同group.id相同<br>
+client.id = &lt;group_id&gt;</p>
+<p># socket的超时时间，实际的超时时间为max.fetch.wait + socket.timeout.ms.<br>
+socket.timeout.ms= 30 * 1000<br>
+# socket的接收缓存空间大小<br>
+socket.receive.buffer.bytes=64 * 1024<br>
+#从每个分区fetch的消息大小限制<br>
+fetch.message.max.bytes = 1024 * 1024</p>
+<p># true时，Consumer会在消费消息后将offset同步到zookeeper，这样当Consumer失败后，新的consumer就能从zookeeper获取最新的offset<br>
+auto.commit.enable = true<br>
+# 自动提交的时间间隔<br>
+auto.commit.interval.ms = 60 * 1000</p>
+<p># 用于消费的最大数量的消息块缓冲大小，每个块可以等同于fetch.message.max.bytes中数值<br>
+queued.max.message.chunks = 10</p>
+<p># 当有新的consumer加入到group时,将尝试reblance,将partitions的消费端迁移到新的consumer中, 该设置是尝试的次数<br>
+rebalance.max.retries = 4<br>
+# 每次reblance的时间间隔<br>
+rebalance.backoff.ms = 2000<br>
+# 每次重新选举leader的时间<br>
+refresh.leader.backoff.ms</p>
+<p># server发送到消费端的最小数据，若是不满足这个数值则会等待直到满足指定大小。默认为1表示立即接收。<br>
+fetch.min.bytes = 1<br>
+# 若是不满足fetch.min.bytes时，等待消费端请求的最长等待时间<br>
+fetch.wait.max.ms = 100<br>
+# 如果指定时间内没有新消息可用于消费，就抛出异常，默认-1表示不受限<br>
+consumer.timeout.ms = -1</p>
+<h2>生产者参数</h2>
+<p># 消费者获取消息元信息(topics, partitions and replicas)的地址,配置格式是：host1:port1,host2:port2，也可以在外面设置一个vip<br>
+metadata.broker.list</p>
+<p>#消息的确认模式<br>
+# 0：不保证消息的到达确认，只管发送，低延迟但是会出现消息的丢失，在某个server失败的情况下，有点像TCP<br>
+# 1：发送消息，并会等待leader 收到确认后，一定的可靠性<br>
+# -1：发送消息，等待leader收到确认，并进行复制操作后，才返回，最高的可靠性<br>
+request.required.acks = 0</p>
+<p># 异步模式下缓冲数据的最大时间。例如设置为100则会集合100ms内的消息后发送，这样会提高吞吐量，但是会增加消息发送的延时<br>
+queue.buffering.max.ms = 5000<br>
+# 异步模式下缓冲的最大消息数，同上<br>
+queue.buffering.max.messages = 10000<br>
+# 异步模式下，消息进入队列的等待时间。若是设置为0，则消息不等待，如果进入不了队列，则直接被抛弃<br>
+queue.enqueue.timeout.ms = -1<br>
+# 异步模式下，每次发送的消息数，当queue.buffering.max.messages或queue.buffering.max.ms满足条件之一时producer会触发发送。<br>
+batch.num.messages=200</p>
+
+
+
+
+
+
+</div>
+<p>
+<br><br></p>
+<p>server.properties中所有配置参数说明(解释)如下列表：</p>
+<p>&nbsp;</p>
+<div class="table-wrapper"><table cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td valign="top">
+<p>参数</p>
+</td>
+<td valign="top">
+<p>说明(解释)</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>broker.id =0</p>
+</td>
+<td valign="top">
+<p>每一个broker在集群中的唯一表示，要求是正数。当该服务器的IP地址发生改变时，broker.id没有变化，则不会影响consumers的消息情况</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.dirs=/data/kafka-logs</p>
+</td>
+<td valign="top">
+<p>kafka数据的存放地址，多个地址的话用逗号分割/data/kafka-logs-1，/data/kafka-logs-2</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>port =9092</p>
+</td>
+<td valign="top">
+<p>broker server服务端口</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>message.max.bytes =6525000</p>
+</td>
+<td valign="top">
+<p>表示消息体的最大大小，单位是字节</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>num.network.threads =4</p>
+</td>
+<td valign="top">
+<p>broker处理消息的最大线程数，一般情况下不需要去修改</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>num.io.threads =8</p>
+</td>
+<td valign="top">
+<p>broker处理磁盘IO的线程数，数值应该大于你的硬盘数</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>background.threads =4</p>
+</td>
+<td valign="top">
+<p>一些后台任务处理的线程数，例如过期消息文件的删除等，一般情况下不需要去做修改</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>queued.max.requests =500</p>
+</td>
+<td valign="top">
+<p>等待IO线程处理的请求队列最大数，若是等待IO的请求超过这个数值，那么会停止接受外部消息，应该是一种自我保护机制。</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>host.name</p>
+</td>
+<td valign="top">
+<p>broker的主机地址，若是设置了，那么会绑定到这个地址上，若是没有，会绑定到所有的接口上，并将其中之一发送到ZK，一般不设置</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>socket.send.buffer.bytes=100*1024</p>
+</td>
+<td valign="top">
+<p>socket的发送缓冲区，socket的调优参数SO_SNDBUFF</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>socket.receive.buffer.bytes =100*1024</p>
+</td>
+<td valign="top">
+<p>socket的接受缓冲区，socket的调优参数SO_RCVBUFF</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>socket.request.max.bytes =100*1024*1024</p>
+</td>
+<td valign="top">
+<p>socket请求的最大数值，防止serverOOM，message.max.bytes必然要小于socket.request.max.bytes，会被topic创建时的指定参数覆盖</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.segment.bytes =1024*1024*1024</p>
+</td>
+<td valign="top">
+<p>topic的分区是以一堆segment文件存储的，这个控制每个segment的大小，会被topic创建时的指定参数覆盖</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.roll.hours =24*7</p>
+</td>
+<td valign="top">
+<p>这个参数会在日志segment没有达到log.segment.bytes设置的大小，也会强制新建一个segment会被&nbsp;topic创建时的指定参数覆盖</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.cleanup.policy = delete</p>
+</td>
+<td valign="top">
+<p>日志清理策略选择有：delete和compact主要针对过期数据的处理，或是日志文件达到限制的额度，会被&nbsp;topic创建时的指定参数覆盖</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.retention.minutes=3days</p>
+</td>
+<td valign="top">
+<p>数据存储的最大时间超过这个时间会根据log.cleanup.policy设置的策略处理数据，也就是消费端能够多久去消费数据</p>
+<p>log.retention.bytes和log.retention.minutes任意一个达到要求，都会执行删除，会被topic创建时的指定参数覆盖</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.retention.bytes=-1</p>
+</td>
+<td valign="top">
+<p>topic每个分区的最大文件大小，一个topic的大小限制&nbsp;=分区数*log.retention.bytes。-1没有大小限log.retention.bytes和log.retention.minutes任意一个达到要求，都会执行删除，会被topic创建时的指定参数覆盖</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.retention.check.interval.ms=5minutes</p>
+</td>
+<td valign="top">
+<p>文件大小检查的周期时间，是否处罚&nbsp;log.cleanup.policy中设置的策略</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.cleaner.enable=<strong>false</strong></p>
+</td>
+<td valign="top">
+<p>是否开启日志压缩</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.cleaner.threads =&nbsp;2</p>
+</td>
+<td valign="top">
+<p>日志压缩运行的线程数</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.cleaner.io.max.bytes.per.second=None</p>
+</td>
+<td valign="top">
+<p>日志压缩时候处理的最大大小</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.cleaner.dedupe.buffer.size=500*1024*1024</p>
+</td>
+<td valign="top">
+<p>日志压缩去重时候的缓存空间，在空间允许的情况下，越大越好</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.cleaner.io.buffer.size=512*1024</p>
+</td>
+<td valign="top">
+<p>日志清理时候用到的IO块大小一般不需要修改</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.cleaner.io.buffer.load.factor =0.9</p>
+</td>
+<td valign="top">
+<p>日志清理中hash表的扩大因子一般不需要修改</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.cleaner.backoff.ms =15000</p>
+</td>
+<td valign="top">
+<p>检查是否处罚日志清理的间隔</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.cleaner.min.cleanable.ratio=0.5</p>
+</td>
+<td valign="top">
+<p>日志清理的频率控制，越大意味着更高效的清理，同时会存在一些空间上的浪费，会被topic创建时的指定参数覆盖</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.cleaner.delete.retention.ms =1day</p>
+</td>
+<td valign="top">
+<p>对于压缩的日志保留的最长时间，也是客户端消费消息的最长时间，同log.retention.minutes的区别在于一个控制未压缩数据，一个控制压缩后的数据。会被topic创建时的指定参数覆盖</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.index.size.max.bytes =10*1024*1024</p>
+</td>
+<td valign="top">
+<p>对于segment日志的索引文件大小限制，会被topic创建时的指定参数覆盖</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.index.interval.bytes =4096</p>
+</td>
+<td valign="top">
+<p>当执行一个fetch操作后，需要一定的空间来扫描最近的offset大小，设置越大，代表扫描速度越快，但是也更好内存，一般情况下不需要搭理这个参数</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.flush.interval.messages=None</p>
+</td>
+<td valign="top">
+<p>log文件”sync”到磁盘之前累积的消息条数,因为磁盘IO操作是一个慢操作,但又是一个”数据可靠性"的必要手段,所以此参数的设置,需要在<strong>"</strong><strong>数据可靠性</strong><strong>"</strong>与"性能"之间做必要的权衡.如果此值过大,将会导致每次"fsync"的时间较长(IO阻塞),如果此值过小,将会导致<strong>"fsync"</strong>的次数较多,这也意味着整体的client请求有一定的延迟.物理server故障,将会导致没有fsync的消息丢失.</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.flush.scheduler.interval.ms =3000</p>
+</td>
+<td valign="top">
+<p>检查是否需要固化到硬盘的时间间隔</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.flush.interval.ms = None</p>
+</td>
+<td valign="top">
+<p>仅仅通过interval来控制消息的磁盘写入时机,是不足的.此参数用于控制<strong>"fsync"</strong>的时间间隔,如果消息量始终没有达到阀值,但是离上一次磁盘同步的时间间隔达到阀值,也将触发.</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.delete.delay.ms =60000</p>
+</td>
+<td valign="top">
+<p>文件在索引中清除后保留的时间一般不需要去修改</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>log.flush.offset.checkpoint.interval.ms =60000</p>
+</td>
+<td valign="top">
+<p>控制上次固化硬盘的时间点，以便于数据恢复一般不需要去修改</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>auto.create.topics.enable =<strong>true</strong></p>
+</td>
+<td valign="top">
+<p>是否允许自动创建topic，若是<strong>false</strong>，就需要通过命令创建topic</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>default</strong>.replication.factor =1</p>
+</td>
+<td valign="top">
+<p>是否允许自动创建topic，若是<strong>false</strong>，就需要通过命令创建topic</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>num.partitions =1</p>
+</td>
+<td valign="top">
+<p>每个topic的分区个数，若是在topic创建时候没有指定的话会被topic创建时的指定参数覆盖</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>&nbsp;</p>
+</td>
+<td valign="top">
+<p>&nbsp;</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>以下是kafka中Leader,replicas配置参数</p>
+</td>
+<td valign="top">
+<p>&nbsp;</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>controller.socket.timeout.ms =30000</p>
+</td>
+<td valign="top">
+<p>partition&nbsp;leader与replicas之间通讯时,socket的超时时间</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>controller.message.queue.size=10</p>
+</td>
+<td valign="top">
+<p>partition&nbsp;leader与replicas数据同步时,消息的队列尺寸</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>replica.lag.time.max.ms =10000</p>
+</td>
+<td valign="top">
+<p>replicas响应partition&nbsp;leader的最长等待时间，若是超过这个时间，就将replicas列入ISR(in-sync replicas)，并认为它是死的，不会再加入管理中</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>replica.lag.max.messages =4000</p>
+</td>
+<td valign="top">
+<p>如果follower落后与leader太多,将会认为此follower[或者说partition&nbsp;relicas]已经失效</p>
+<p>##通常,在follower与leader通讯时,因为网络延迟或者链接断开,总会导致replicas中消息同步滞后</p>
+<p>##如果消息之后太多,leader将认为此follower网络延迟较大或者消息吞吐能力有限,将会把此replicas迁移</p>
+<p>##到其他follower中.</p>
+<p>##在broker数量较少,或者网络不足的环境中,建议提高此值.</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>replica.socket.timeout.ms=30*1000</p>
+</td>
+<td valign="top">
+<p>follower与leader之间的socket超时时间</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>replica.socket.receive.buffer.bytes=64*1024</p>
+</td>
+<td valign="top">
+<p>leader复制时候的socket缓存大小</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>replica.fetch.max.bytes =1024*1024</p>
+</td>
+<td valign="top">
+<p>replicas每次获取数据的最大大小</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>replica.fetch.wait.max.ms =500</p>
+</td>
+<td valign="top">
+<p>replicas同leader之间通信的最大等待时间，失败了会重试</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>replica.fetch.min.bytes =1</p>
+</td>
+<td valign="top">
+<p>fetch的最小数据尺寸,如果leader中尚未同步的数据不足此值,将会阻塞,直到满足条件</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>num.replica.fetchers=1</p>
+</td>
+<td valign="top">
+<p>leader进行复制的线程数，增大这个数值会增加follower的IO</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>replica.high.watermark.checkpoint.interval.ms =5000</p>
+</td>
+<td valign="top">
+<p>每个replica检查是否将最高水位进行固化的频率</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>controlled.shutdown.enable =<strong>false</strong></p>
+</td>
+<td valign="top">
+<p>是否允许控制器关闭broker ,若是设置为<strong>true</strong>,会关闭所有在这个broker上的leader，并转移到其他broker</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>controlled.shutdown.max.retries =3</p>
+</td>
+<td valign="top">
+<p>控制器关闭的尝试次数</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>controlled.shutdown.retry.backoff.ms =5000</p>
+</td>
+<td valign="top">
+<p>每次关闭尝试的时间间隔</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>leader.imbalance.per.broker.percentage =10</p>
+</td>
+<td valign="top">
+<p>leader的不平衡比例，若是超过这个数值，会对分区进行重新的平衡</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>leader.imbalance.check.interval.seconds =300</p>
+</td>
+<td valign="top">
+<p>检查leader是否不平衡的时间间隔</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>offset.metadata.max.bytes</p>
+</td>
+<td valign="top">
+<p>客户端保留offset信息的最大空间大小</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>kafka中zookeeper参数配置</p>
+</td>
+<td valign="top">
+<p>&nbsp;</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>zookeeper.connect = localhost:2181</p>
+</td>
+<td valign="top">
+<p>zookeeper集群的地址，可以是多个，多个之间用逗号分割hostname1:port1,hostname2:port2,hostname3:port3</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>zookeeper.session.timeout.ms=6000</p>
+</td>
+<td valign="top">
+<p>ZooKeeper的最大超时时间，就是心跳的间隔，若是没有反映，那么认为已经死了，不易过大</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>zookeeper.connection.timeout.ms =6000</p>
+</td>
+<td valign="top">
+<p>ZooKeeper的连接超时时间</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>zookeeper.sync.time.ms =2000</p>
+</td>
+<td valign="top">
+<p>ZooKeeper集群中leader和follower之间的同步实际那</p>
+</td>
+</tr>
+</tbody>
+</table></div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><strong><span style="font-size: 18pt">kafka命令和参数</span></strong></p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre>1<span style="color: rgba(0, 0, 0, 1)">.查看topic的详细信息 
+.</span>/kafka-topics.sh -zookeeper 127.0.0.1:2181 -describe -<span style="color: rgba(0, 0, 0, 1)">topic testKJ1 
+  
+</span>2<span style="color: rgba(0, 0, 0, 1)">、为topic增加副本 
+.</span>/kafka-reassign-partitions.sh -zookeeper 127.0.0.1:2181 -reassignment-json-file json/partitions-to-move.json -<span style="color: rgba(0, 0, 0, 1)">execute 
+  
+</span>3<span style="color: rgba(0, 0, 0, 1)">、创建topic 
+.</span>/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --<span style="color: rgba(0, 0, 0, 1)">topic testKJ1 
+  
+</span>4<span style="color: rgba(0, 0, 0, 1)">、为topic增加partition 
+.</span>/bin/kafka-topics.sh –zookeeper 127.0.0.1:2181 –alter –partitions 20<span style="color: rgba(0, 0, 0, 1)"> –topic testKJ1 
+  
+</span>5<span style="color: rgba(0, 0, 0, 1)">、kafka生产者客户端命令 
+.</span>/kafka-console-producer.sh --broker-list localhost:9092 --<span style="color: rgba(0, 0, 0, 1)">topic testKJ1 
+  
+</span>6<span style="color: rgba(0, 0, 0, 1)">、kafka消费者客户端命令 
+.</span>/kafka-console-consumer.sh -zookeeper localhost:2181 --from-beginning --<span style="color: rgba(0, 0, 0, 1)">topic testKJ1 
+  
+</span>7<span style="color: rgba(0, 0, 0, 1)">、kafka服务启动 
+.</span>/kafka-server-start.sh -daemon ../config/<span style="color: rgba(0, 0, 0, 1)">server.properties  
+  
+</span>8<span style="color: rgba(0, 0, 0, 1)">、下线broker 
+.</span>/kafka-run-<span style="color: rgba(0, 0, 255, 1)">class</span>.sh kafka.admin.ShutdownBroker --zookeeper 127.0.0.1:2181 --broker #brokerId# --num.retries 3 --retry.interval.ms 60<span style="color: rgba(0, 0, 0, 1)"> 
+shutdown broker 
+  
+</span>9<span style="color: rgba(0, 0, 0, 1)">、删除topic 
+.</span>/kafka-run-<span style="color: rgba(0, 0, 255, 1)">class</span>.sh kafka.admin.DeleteTopicCommand --topic testKJ1 --zookeeper 127.0.0.1:2181<span style="color: rgba(0, 0, 0, 1)"> 
+.</span>/kafka-topics.sh --zookeeper localhost:2181 --delete --<span style="color: rgba(0, 0, 0, 1)">topic testKJ1 
+  
+</span>10<span style="color: rgba(0, 0, 0, 1)">、查看consumer组内消费的offset 
+.</span>/kafka-run-<span style="color: rgba(0, 0, 255, 1)">class</span>.sh kafka.tools.ConsumerOffsetChecker --zookeeper localhost:2181 --group test --topic testKJ1</pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p>&nbsp;</p>
+<p><br>1，删除操作：</p>
+<div class="cnblogs_code">
+<pre>$bin/kafka-topics.sh --zookeeper hadoop108:2181 --delete --topic first</pre>
+</div>
+<p><span style="background-color: rgba(255, 204, 0, 1)">　　默认是标记删除，如果要真的删除，需要设置：delete.topic.enable=true</span> <br> <br>2，创建一个主题，该主题有三个分区，有两个副本</p>
+<div class="cnblogs_code">
+<pre>$bin/kafka-topics.sh --zookeeper hadoop108:2181 --create --topic first <span style="background-color: rgba(255, 204, 0, 1)">--partitions 3 --replication-factor 2</span></pre>
+</div>
+<p> <br>3，查看当前有多少主题：</p>
+<div class="cnblogs_code">
+<pre>$ bin/kafka-topics.sh --zookeeper hadoop108:2181 --<span style="color: rgba(0, 0, 0, 1)">list 
+first</span></pre>
+</div>
+<p>　　因为主题相关的信息都<span style="background-color: rgba(255, 204, 0, 1)">存储在zookeeper</span>中，所以我们需要连接到zookeeper集群，获取到主题相关的数据<br> <br>4，查看某个topic的详情：</p>
+<div class="cnblogs_code">
+<pre>$ bin/kafka-topics.sh --zookeeper hadoop108:2181 --describe --<span style="color: rgba(0, 0, 0, 1)">topic first
+Topic:first    PartitionCount:</span>3    ReplicationFactor:2<span style="color: rgba(0, 0, 0, 1)">    Configs:
+Topic: first    Partition: </span>0    Leader: 9    Replicas: 9,10    Isr: 9,10<span style="color: rgba(0, 0, 0, 1)">
+Topic: first    Partition: </span>1    Leader: 10    Replicas: 10,8    Isr: 10,8<span style="color: rgba(0, 0, 0, 1)">
+Topic: first    Partition: </span>2    Leader: 8    Replicas: 8,9    Isr: 8,9</pre>
+</div>
+<p>　　这里，主题是名称是first，分区0，的leader在9上，副本在9 和10 上，分区1的leader在10上，副本在8和10 上；分区2的leader在8上，副本在8,9 上；ISR：in sync replication，正在同步的副本；<br> <br>　　如此此时我们kill掉10；</p>
+<div class="cnblogs_code">
+<pre>bin/kafka-topics.sh --zookeeper hadoop108:2181 --describe --<span style="color: rgba(0, 0, 0, 1)">topic first
+Topic:first    PartitionCount:</span>3    ReplicationFactor:2<span style="color: rgba(0, 0, 0, 1)">    Configs:
+Topic: first    Partition: </span>0    Leader: 9    Replicas: 9,10    Isr: 9<span style="color: rgba(0, 0, 0, 1)">
+Topic: first    Partition: </span>1    Leader: 8    Replicas: 10,8    Isr: 8<span style="color: rgba(0, 0, 0, 1)">
+Topic: first    Partition: </span>2    Leader: 8    Replicas: 8,9    Isr: 8,9</pre>
+</div>
+<p>　　此时，分区1的leader变为8等待一会时间之后，分区会自平衡，所谓的自平衡就是leader均匀的分布，在本题中就是partition2的leader会重新恢复为10</p>
+<p> <br>5，生产数据：数据的生产和zookeeper没有关系</p>
+<div class="cnblogs_code">
+<pre>$ bin/kafka-console-producer.sh --broker-list hadoop108:9092 --<span style="color: rgba(0, 0, 0, 1)">topic first
+</span>&gt;<span style="color: rgba(0, 0, 0, 1)">hello
+</span>&gt;kafka</pre>
+</div>
+<p>　　生产数据的时候需要获得消息队列集群的broker，这样才能知道生产完毕的数据放在哪里，所以需要指定kafka消息队列的集群在集群通信的端口号。c除此之外，还需要指定该数据是在哪个分区的。<br><br>6，数据的消费，需要连接到zookeeper，这样才能获取上次消费的offset，从而决定从哪里消费，还要指定消费的主题</p>
+<div class="cnblogs_code">
+<pre>[isea@hadoop108 kafka]$ bin/kafka-console-consumer.sh --zookeeper hadoop108:2181 --from-beginning -<span style="color: rgba(0, 0, 0, 1)">topic first
+hello
+kafka</span></pre>
+</div>
+<p>　　在生产者中生产数据之后，在消费者端能够接收到数据<br> <br>　　我们在查看一下数据：</p>
+<div class="cnblogs_code">
+<pre>[isea@hadoop108 kafka]$ bin/kafka-topics.sh --zookeeper hadoop108:2181 --describe --<span style="color: rgba(0, 0, 0, 1)">topic first
+Topic:first    PartitionCount:</span>3    ReplicationFactor:2<span style="color: rgba(0, 0, 0, 1)">    Configs:
+Topic: first    Partition: </span>0    Leader: 9    Replicas: 9,10    Isr: 9,10<span style="color: rgba(0, 0, 0, 1)">
+Topic: first    Partition: </span>1    Leader: 10    Replicas: 10,8    Isr: 8,10<span style="color: rgba(0, 0, 0, 1)">
+Topic: first    Partition: </span>2    Leader: 8    Replicas: 8,9    Isr: 8,9</pre>
+</div>
+<p>&nbsp;</p>
+<p>　　当前的机器是8，分区2的数据，保存了两份，在8 9 两台机器上，leader在8，所以我们查看一下logs下的first2，下面是有数据的，为kafka；</p>
+<div class="cnblogs_code">
+<pre>[isea@hadoop108 first-2]$ strings 00000000000000000000<span style="color: rgba(0, 0, 0, 1)">.log 
+kafka</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>　　对于分区0 ，在9 10 机器上有数据信息，leader在9上，所以查看一下logs下面的first0，有数据为hello</p>
+<div class="cnblogs_code">
+<pre>hello[isea@hadoop109 first-0]$ strings 00000000000000000000<span style="color: rgba(0, 0, 0, 1)">.log 
+hello</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>　　分析：我们产生的消息是 hello 和 kafka，这是一份完整的数据被标记为first主题，该first主题有三个分区，被标记为first主题的每一粒数据，进入消息队列的时候将会被存储到这三个分区中的一个，这里hello被存储到了分区0，分区0在9号机器上，同时分区0还有一个备份在10号机器上；而kafka被存储到了分区1，在10号机器上，同时分区1在8号机器上还有一个备份<br> <br> <br>　　在kafka0.9及其之后，kafka消费者做了相应的变化，将原本放在zookeeper中的offset数据放在了kafka的集群本地，于是我们还可以使用下面的客户端命令来进行消费：</p>
+<div class="cnblogs_code">
+<pre>[isea@hadoop101 kafka]$ bin/kafka-console-consumer.sh --bootstrap-server hadoop101:9092 --<span style="color: rgba(0, 0, 0, 1)">topic first 
+hello
+kafka</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>　　此时我们在查看一下log日志的：</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: rgba(0, 0, 0, 1)">[isea@hadoop101 logs]$ tree
+.
+├── cleaner</span>-offset-<span style="color: rgba(0, 0, 0, 1)">checkpoint
+├── __consumer_offsets</span>-0<span style="color: rgba(0, 0, 0, 1)">
+│   ├── </span>00000000000000000000<span style="color: rgba(0, 0, 0, 1)">.index
+│   ├── </span>00000000000000000000<span style="color: rgba(0, 0, 0, 1)">.log
+│   ├── </span>00000000000000000000<span style="color: rgba(0, 0, 0, 1)">.timeindex
+│   └── leader</span>-epoch-checkpoint</pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p><br>　　发现offset的信息存储在了log中，而且偏移量的信息保存在了集群中，也即所有的机器中，但是整个集群合起来是所有的偏移量的信息。<br><br></p>
+<p><br><br>参考：</p>
+<p>https://www.jianshu.com/p/49f23183a6a3<br><a href="https://www.jb51.net/article/99923.htm">https://www.jb51.net/article/99923.htm</a></p>
+<p><a href="https://blog.csdn.net/qq_31807385/article/details/84948701">https://blog.csdn.net/qq_31807385/article/details/84948701</a></p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block"><div id="BlogPostCategory">
+    分类: 
+            <a href="https://www.cnblogs.com/51python/category/1409804.html" target="_blank">大数据</a></div>
+
+
+    <div id="blog_post_info">
+<div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(10966757,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+        <a id="green_channel_follow" onclick="follow(&#39;ac051ae4-a414-46ed-7dea-08d65db98d81&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/51python/" target="_blank"><img src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/sample_face.gif" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/51python/">-涂涂-</a><br>
+            <a href="https://home.cnblogs.com/u/51python/followees/">关注 - 5</a><br>
+            <a href="https://home.cnblogs.com/u/51python/followers/">粉丝 - 5</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;ac051ae4-a414-46ed-7dea-08d65db98d81&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(10966757,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">0</span>
+    </div>
+    <div class="buryit" onclick="votePost(10966757,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+
+<script type="text/javascript">
+    currentDiggType = 0;
+</script></div>
+    <div class="clear"></div>
+    <div id="post_next_prev">
+
+    <a href="https://www.cnblogs.com/51python/p/10966341.html" class="p_n_p_prefix">« </a> 上一篇：    <a href="https://www.cnblogs.com/51python/p/10966341.html" title="发布于 2019-06-03 11:00">flume参数解析+启动参数解析</a>
+    <br>
+    <a href="https://www.cnblogs.com/51python/p/10976608.html" class="p_n_p_prefix">» </a> 下一篇：    <a href="https://www.cnblogs.com/51python/p/10976608.html" title="发布于 2019-06-04 22:17">storm并行</a>
+
+</div>
+</div>
+		</div>
+		<div class="postDesc">posted @ 
+<span id="post-date">2019-06-03 12:07</span>&nbsp;
+<a href="https://www.cnblogs.com/51python/">-涂涂-</a>&nbsp;
+阅读(<span id="post_view_count">1457</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=10966757" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(10966757);return false;">收藏</a></div>
+	</div>
+	
+	
+</div><!--end: topics 文章、评论容器-->
+<script src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 481537, cb_blogApp = '51python', cb_blogUserGuid = 'ac051ae4-a414-46ed-7dea-08d65db98d81';
+    var cb_entryId = 10966757, cb_entryCreatedDate = '2019-06-03 12:07', cb_postType = 1;
+    updatePostStats(
+        [cb_entryId],
+        function(id, count) { $("#post_view_count").text(count) },
+        function(id, count) { $("#post_comment_count").text(count) })
+    zoomManager.apply("#cnblogs_post_body img:not(.code_img_closed):not(.code_img_opened)");
+</script>
+<a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="https://www.cnblogs.com/51python/p/10966757.html#" onclick="return RefreshPage();">刷新页面</a><a href="https://www.cnblogs.com/51python/p/10966757.html#top">返回顶部</a></div>
+    <div id="comment_form_container" style="visibility: visible;"><div class="login_tips">
+    登录后才能查看或发表评论，立即 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return account.login(&#39;!comments&#39;);">登录</a> 或者
+    <a href="https://www.cnblogs.com/">逛逛</a> 博客园首页
+</div>
+</div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"><a href="https://developer.aliyun.com/topic/worldreadingday?utm_content=g_1000264433" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-阿里云-读书&#39;)">【推荐】世界读书日活动--记录阅读之路，影响同行之人</a><br><a href="https://surveys.surveyvikings.com/survey/selfserve/56d/210408?list=10" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-阿里云-问卷&#39;)">【推荐】全球最大规模开发者调查启动--你的声音，值得让世界听见！</a><br><a href="http://www.uccpsoft.com/index.htm" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-ucancode&#39;)">【推荐】大型组态、工控、仿真、CAD\GIS 50万行VC++源码免费下载!</a><br><a href="https://brands.cnblogs.com/huawei" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-华为专区&#39;)">【推荐】全体注意！一大波鸿蒙三方库即将到来！赶紧收藏！</a><br><a href="http://www.moojnn.com/?source=bokeyuan" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-魔镜&#39;)">【推荐】限时秒杀！国云大数据魔镜，企业级云分析平台</a><br></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="under-post-card">
+        <div id="div-gpt-ad-1592365906576-0" style="width: 300px; height: 250px;" data-google-query-id="CNDb88WfjPACFQ_EFgUd928FxA"><div id="google_ads_iframe_/1090369/C1_0__container__" style="border: 0pt none;"><iframe id="google_ads_iframe_/1090369/C1_0" title="3rd party ad content" name="google_ads_iframe_/1090369/C1_0" width="300" height="250" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" allow="conversion-measurement &#39;src&#39;" data-google-container-id="1" style="border: 0px; vertical-align: bottom;" data-load-complete="true" src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/saved_resource.html"></iframe></div></div>
+    </div>
+    <div id="under_post_card1"><div class="under-post-card"><b>园子动态</b>：<br>· <a href="https://www.cnblogs.com/cmt/p/14585828.html" target="_blank">致园友们的一封检讨书：都是我们的错</a><br>· <a href="https://www.cnblogs.com/cmt/p/14595262.html" target="_blank">数据库实例 CPU 100% 引发全站故障</a><br>· <a href="https://www.cnblogs.com/cmt/p/14217355.html" target="_blank">发起一个开源项目：博客引擎 fluss</a><br></div></div>
+    <div id="cnblogs_c2" class="under-post-card">
+        <div id="div-gpt-ad-1592366332455-0" style="width: 468px; height: 60px;" data-google-query-id="CNHb88WfjPACFQ_EFgUd928FxA"><div id="google_ads_iframe_/1090369/C2_0__container__" style="border: 0pt none;"><iframe id="google_ads_iframe_/1090369/C2_0" title="3rd party ad content" name="google_ads_iframe_/1090369/C2_0" width="468" height="60" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" allow="conversion-measurement &#39;src&#39;" data-google-container-id="2" style="border: 0px; vertical-align: bottom;" data-load-complete="true" src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/saved_resource(1).html"></iframe></div></div>
+    </div>
+    <div id="under_post_card2"><div class="itnews under-post-card">
+    <b>最新新闻</b>：
+    <br>
+ ·          <a href="https://news.cnblogs.com/n/691342/" target="_blank">MIUI 12.5 来了，小米 11 Ultra 补全了最后一块拼图</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/691341/" target="_blank">特斯拉陶琳：国内国外需求旺盛，上海工厂加班加点</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/691340/" target="_blank">滴滴电商内测"今日爆款"，对标拼多多和美团“团好货”</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/691339/" target="_blank">中国工业互联网的脖子被卡死了？</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/691338/" target="_blank">美国火星直升机已完成首飞：NASA特别致敬莱特兄弟</a>
+        <br>
+    » <a href="https://news.cnblogs.com/" title="IT 新闻" target="_blank">更多新闻...</a>
+</div></div>
+    <div id="HistoryToday" class="under-post-card"></div>
+    <script type="text/javascript">
+       var commentManager = new blogCommentManager();
+       commentManager.renderComments(0);
+       fixPostBody();
+       deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);       deliverT2();
+       deliverC1C2();
+       loadNewsAndKb();
+       loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);       LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+       GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+       loadOptUnderPost();
+       GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			<div id="sidebar_news" class="newsItem"><!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	
+<div id="blog-news">
+    
+    <div id="profile_block">
+        昵称：
+        <a href="https://home.cnblogs.com/u/51python/">
+            -涂涂-
+        </a>
+        <br>
+        园龄：
+        <a href="https://home.cnblogs.com/u/51python/" title="入园时间：2018-12-10">
+            2年4个月
+        </a>
+        <br>
+        粉丝：
+        <a href="https://home.cnblogs.com/u/51python/followers/">
+            5
+        </a>
+        <br>
+        关注：
+        <a href="https://home.cnblogs.com/u/51python/followees/">
+            5
+        </a>
+        <div id="p_b_follow">
+<a href="javascript:void(0)" onclick="follow(&#39;ac051ae4-a414-46ed-7dea-08d65db98d81&#39;)">+加关注</a></div>
+        <script>getFollowStatus('ac051ae4-a414-46ed-7dea-08d65db98d81');</script>
+    </div>
+</div>
+</div>
+
+</div>
+<div id="sidebar_c3"></div>
+			<div id="calendar"><div id="blog-calendar" style="">
+
+<table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar" border="0">
+    <tbody>
+        <tr>
+            <td colspan="7">
+                <table class="CalTitle" cellspacing="0" border="0">
+                    <tbody>
+                        <tr>
+                            <td class="CalNextPrev">
+                                <a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2021/03/20&#39;); return false;">&lt;</a>
+                            </td>
+                            <td align="center">2021年4月</td>
+                            <td align="right" class="CalNextPrev">
+                                <a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2021/05/20&#39;); return false;">&gt;</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    <tr>
+        <th class="CalDayHeader" align="center" abbr="日" scope="col">日</th>
+        <th class="CalDayHeader" align="center" abbr="一" scope="col">一</th>
+        <th class="CalDayHeader" align="center" abbr="二" scope="col">二</th>
+        <th class="CalDayHeader" align="center" abbr="三" scope="col">三</th>
+        <th class="CalDayHeader" align="center" abbr="四" scope="col">四</th>
+        <th class="CalDayHeader" align="center" abbr="五" scope="col">五</th>
+        <th class="CalDayHeader" align="center" abbr="六" scope="col">六</th>
+    </tr>
+            <tr>
+                            <td class="CalOtherMonthDay" align="center">28</td>
+                            <td class="CalOtherMonthDay" align="center">29</td>
+                            <td class="CalOtherMonthDay" align="center">30</td>
+                            <td class="CalOtherMonthDay" align="center">31</td>
+                        <td class="" align="center">
+                            1
+                        </td>
+                        <td class="" align="center">
+                            2
+                        </td>
+                    <td class="CalWeekendDay" align="center">
+                        3
+                    </td>
+            </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            4
+                        </td>
+                            <td class="" align="center">
+                                5
+                            </td>
+                            <td class="" align="center">
+                                6
+                            </td>
+                            <td class="" align="center">
+                                7
+                            </td>
+                            <td class="" align="center">
+                                8
+                            </td>
+                            <td class="" align="center">
+                                9
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            10
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            11
+                        </td>
+                            <td class="" align="center">
+                                12
+                            </td>
+                            <td class="" align="center">
+                                13
+                            </td>
+                            <td class="" align="center">
+                                14
+                            </td>
+                            <td class="" align="center">
+                                15
+                            </td>
+                            <td class="" align="center">
+                                16
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            17
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            18
+                        </td>
+                            <td class="" align="center">
+                                19
+                            </td>
+                            <td class="CalTodayDay" align="center">
+                                20
+                            </td>
+                            <td class="" align="center">
+                                21
+                            </td>
+                            <td class="" align="center">
+                                22
+                            </td>
+                            <td class="" align="center">
+                                23
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            24
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            25
+                        </td>
+                            <td class="" align="center">
+                                26
+                            </td>
+                            <td class="" align="center">
+                                27
+                            </td>
+                            <td class="" align="center">
+                                28
+                            </td>
+                            <td class="" align="center">
+                                29
+                            </td>
+                            <td class="" align="center">
+                                30
+                            </td>
+                        <td class="CalOtherMonthDay" align="center">
+                            1
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalOtherMonthDay" align="center">
+                            2
+                        </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                3
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                4
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                5
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                6
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                7
+                            </td>
+                        <td class="CalOtherMonthDay" align="center">
+                            8
+                        </td>
+                </tr>
+    </tbody>
+</table></div><script>loadBlogDefaultCalendar();</script></div>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><!-- 搜索 -->
+<div id="sidebar_search" class="sidebar-block">
+    <div id="sidebar_search" class="mySearch">
+        <h3 class="catListTitle">搜索</h3>
+        <div id="sidebar_search_box">
+            <div id="widget_my_zzk" class="div_my_zzk">
+                <input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk">
+            </div>
+            <div id="widget_my_google" class="div_my_zzk">
+                <input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 常用链接 -->
+<div id="sidebar_shortcut" class="sidebar-block"><div class="catListLink">
+<h3 class="catListTitle">
+常用链接
+</h3>
+<ul>
+    
+<li><a href="https://www.cnblogs.com/51python/p/" title="我的博客的随笔列表">我的随笔</a></li>
+<li><a href="https://www.cnblogs.com/51python/MyComments.html" title="我的发表过的评论列表">我的评论</a></li>
+<li><a href="https://www.cnblogs.com/51python/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li>
+<li><a href="https://www.cnblogs.com/51python/RecentComments.html" title="我的博客的评论列表">最新评论</a></li>
+<li><a href="https://www.cnblogs.com/51python/tag/" title="我的博客的标签列表">我的标签</a></li>
+
+    <li><a id="itemListLink" onclick="this.blur();WarpClass(&#39;itemListLink&#39;, &#39;itemListLin_con&#39;);return false;" href="https://www.cnblogs.com/51python/p/10966757.html#">更多链接</a></li>
+</ul>
+</div>
+
+</div>
+
+<!-- 最新随笔 -->
+
+
+<!-- 我的标签 -->
+<div id="sidebar_toptags" class="sidebar-block"></div>
+
+<!-- 积分与排名 -->
+<div id="sidebar_scorerank" class="sidebar-block"><div class="catListBlogRank">
+<h3 class="catListTitle">积分与排名</h3>
+<ul>
+	<li class="liScore">
+        积分 -	
+132979
+    </li>
+	<li class="liRank">
+		排名 -	
+6786
+	</li>
+</ul>
+</div>
+
+
+
+</div>
+
+<!-- 随笔分类、随笔档案、文章分类、新闻分类、相册、链接 -->
+<div id="sidebar_categories">
+
+    <div class="catListPostCategory">
+        <h3 class="catListTitle">
+            
+随笔分类
+
+
+
+        </h3>
+
+        <ul>
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1376596.html" rel="" target="">
+    Android(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1437500.html" rel="" target="">
+    java(6)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1439841.html" rel="" target="">
+    javaScript(3)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1379138.html" rel="" target="">
+    Linux(18)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1432985.html" rel="" target="">
+    maven(3)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1370557.html" rel="" target="">
+    python sklearn 函数使用总结(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1361018.html" rel="" target="">
+    python 爬虫(3)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1361019.html" rel="" target="">
+    python 文本数据处理(7)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1373863.html" rel="" target="">
+    python基础学习(25)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1442334.html" rel="" target="">
+    softInstall(8)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1379169.html" rel="" target="">
+    spark(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1432984.html" rel="" target="">
+    springboot(2)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1430190.html" rel="" target="">
+    web(14)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1410592.html" rel="" target="">
+    windows(4)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/category/1409804.html" rel="" target="">
+    大数据(37)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/51python/category/1407580.html" rel="" target="">
+    机器学习(3)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/51python/category/1417507.html" rel="" target="">
+    数据库(23)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/51python/category/1546303.html" rel="" target="">
+    算法(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/51python/category/1489215.html" rel="" target="">
+    自然语言处理(5)
+</a>
+ 
+
+                </li>                
+            <li><a href="javascript:void(0)" onclick="sideColumnManager.loadMore(this)">更多</a></li>
+        </ul>
+    </div>    
+    <div class="catListPostArchive">
+        <h3 class="catListTitle">
+            
+随笔档案
+
+
+
+        </h3>
+
+        <ul>
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2021/03.html" rel="" target="">
+    2021年3月(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2021/01.html" rel="" target="">
+    2021年1月(2)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2020/11.html" rel="" target="">
+    2020年11月(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2020/09.html" rel="" target="">
+    2020年9月(5)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2020/08.html" rel="" target="">
+    2020年8月(2)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2019/12.html" rel="" target="">
+    2019年12月(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2019/11.html" rel="" target="">
+    2019年11月(2)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2019/10.html" rel="" target="">
+    2019年10月(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2019/09.html" rel="" target="">
+    2019年9月(8)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2019/08.html" rel="" target="">
+    2019年8月(7)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2019/07.html" rel="" target="">
+    2019年7月(7)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2019/06.html" rel="" target="">
+    2019年6月(15)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2019/05.html" rel="" target="">
+    2019年5月(42)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2019/04.html" rel="" target="">
+    2019年4月(29)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2019/03.html" rel="" target="">
+    2019年3月(28)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2019/02.html" rel="" target="">
+    2019年2月(5)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2019/01.html" rel="" target="">
+    2019年1月(6)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/51python/archive/2018/12.html" rel="" target="">
+    2018年12月(4)
+</a>
+ 
+
+                </li>                
+            <li><a href="javascript:void(0)" onclick="sideColumnManager.loadMore(this)">更多</a></li>
+        </ul>
+    </div>    
+</div>
+
+<!-- 最新评论 -->
+<div id="sidebar_recentcomments" class="sidebar-block"><div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+
+	<div class="RecentCommentBlock">
+        <ul>
+                    <li class="recent_comment_title"><a href="https://www.cnblogs.com/51python/p/11300023.html">1. Re:python3 四舍五入（0.5可以进1）</a></li>
+                    <li class="recent_comment_body">@ ZGHMVP我刚刚试了下，把prec设置成1可以进行四舍五入了，原来这个是表示有效数字的位数。感谢你的建议 ：）！！！...</li>
+                    <li class="recent_comment_author">---涂涂-</li>
+                    <li class="recent_comment_title"><a href="https://www.cnblogs.com/51python/p/11300023.html">2. Re:python3 四舍五入（0.5可以进1）</a></li>
+                    <li class="recent_comment_body">Decimal你设置的是3位小数，0.5怎么可能会四舍五入.</li>
+                    <li class="recent_comment_author">--ZGHMVP</li>
+        </ul>
+    </div>
+</div>
+
+</div>
+
+
+<!-- 阅读排行榜 -->
+<div id="sidebar_topviewedposts" class="sidebar-block"><div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock">
+        <ul style="word-break:break-all">
+                    <li>
+                        <a href="https://www.cnblogs.com/51python/p/11443602.html">
+                            1. mysql id 自增实现(14293)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/51python/p/10928108.html">
+                            2. ubuntu16安装python3(13338)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/51python/p/10833591.html">
+                            3. org.apache.hadoop.conf.Configuration无法引用 解决方法(10960)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/51python/p/11517414.html">
+                            4. python生成多维数组方法总结（多维创建有问题的情况）(10943)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/51python/p/10853545.html">
+                            5. 解决    plsql   启动报错   Initialization error(9312)
+                        </a>
+                    </li>
+        </ul>
+    </div>
+</div>
+
+</div>
+
+<!-- 评论排行榜 -->
+<div id="sidebar_topcommentedposts" class="sidebar-block"><div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock">
+        <ul style="word-break:break-all">
+                    <li>
+                        <a href="https://www.cnblogs.com/51python/p/11300023.html">
+                            1. python3 四舍五入（0.5可以进1）(2)
+                        </a>
+                    </li>
+        </ul>
+    </div>
+</div>
+
+</div>
+
+<!-- 推荐排行榜 -->
+<div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+    <div class="catListView">
+        <h3 class="catListTitle">推荐排行榜</h3>
+        <div id="TopDiggPostsBlock">
+            <ul style="word-break: break-all">
+                        <li>
+                            <a href="https://www.cnblogs.com/51python/p/11470460.html">
+                                1. python合并视频(1)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/51python/p/11033002.html">
+                                2. python读取word中的段落、表、图+++++++++++Doc转换Docx(1)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/51python/p/10995243.html">
+                                3. secondNameNode作用(1)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/51python/p/10948346.html">
+                                4. kafka topic查看删除(1)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/51python/p/10909190.html">
+                                5. storm 介绍+八种grouping方法(1)
+                            </a>
+                        </li>
+            </ul>
+        </div>
+    </div>
+</div></div></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer" chrome-app-version="1.3.3">
+		<!--done-->
+Copyright © 2021 -涂涂-
+<br><span id="poweredby">Powered by .NET 5.0 on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+
+    <input type="hidden" id="antiforgery_token" value="CfDJ8L-rpLgFVEJMgssCVvNUAjtCCwWDEqSXORu1HaREw0bbjcVJ6sD_6TQ1jYMd2LqYrBmWINKHpTWeF3awJF_fAsTF0D0EdGTKOogqWzOBfpBMSF9ctZ8d9t2yc_26FihOrvgdq9saRIMZKII_q7tpNW8">
+
+
+<iframe id="google_osd_static_frame_1385477513363" name="google_osd_static_frame" style="display: none; width: 0px; height: 0px;" src="./kafka参数解析+启动参数解析 - -涂涂- - 博客园_files/saved_resource(2).html"></iframe></body></html>
